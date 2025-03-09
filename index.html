@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+    <script>
+        const GRID_WIDTH = 14
+        const GAP = 1
+
+        const SQUARE_WIDTH = Math.ceil(window.innerWidth / (GRID_WIDTH + GAP))
+        const SQUARE_HEIGHT = Math.ceil(window.innerHeight / (GRID_WIDTH + GAP))
+
+        const COLORS = ["#F1C29A", "#78A695", "#576CA2", "#B65259"];
+        const BACKGROUND_COLOR = "#390A29";
+
+        // Setup initial color
+        const SQUARE_COLOR = Array.from({ length: SQUARE_HEIGHT }, () => Array(SQUARE_WIDTH).fill(BACKGROUND_COLOR));
+        const PARTICLE_QUEUE = [];
+            // particle = {color: BACKGROUND_COLOR, velocity: [0,0], exact_coords: [0,0]}
+
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            background("#220619");
+        }
+
+
+        function draw() {
+            var mouseSquareX = Math.floor(mouseX / (GRID_WIDTH + GAP));
+            var mouseSquareY = Math.floor(mouseY / (GRID_WIDTH + GAP));
+
+            var angle = Math.random()*2*Math.PI;
+            var particle = {   color: COLORS[Math.floor(Math.random() * COLORS.length)], 
+                                    velocity: [Math.cos(angle),Math.sin(angle)], 
+                                    exact_coords: [mouseX, mouseY]}
+            console.log(particle)
+            PARTICLE_QUEUE.push(particle)
+
+
+            // Paint Squares
+            for (var i = 0; i < SQUARE_WIDTH; i++) {
+                for (var j = 0; j < SQUARE_HEIGHT; j++) {
+                    var fill_color = SQUARE_COLOR[j][i];
+                    fill(fill_color);
+                    noStroke()
+
+                    quad(i * ((GRID_WIDTH + GAP)), j * (GRID_WIDTH + GAP),
+                        GRID_WIDTH + i * ((GRID_WIDTH + GAP)), j * (GRID_WIDTH + GAP),
+                        GRID_WIDTH + i * ((GRID_WIDTH + GAP)), GRID_WIDTH + j * (GRID_WIDTH + GAP),
+                        i * ((GRID_WIDTH + GAP)), GRID_WIDTH + j * (GRID_WIDTH + GAP));
+                }
+            }
+        }
+
+        function hexToRgb(hex) {
+            hex = hex.replace(/^#/, '');
+            let bigint = parseInt(hex, 16);
+            return {
+                r: (bigint >> 16) & 255,
+                g: (bigint >> 8) & 255,
+                b: bigint & 255
+            };
+        }
+
+        function rgbToHex(r, g, b) {
+            return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+        }
+
+        function stepColorTowardsBackground(startHex) {
+            let startRGB = hexToRgb(startHex);
+            let targetRGB = hexToRgb(BACKGROUND_COLOR);
+
+            var steps = 20;
+
+            let stepSize = {
+                r: (targetRGB.r - startRGB.r) / steps,
+                g: (targetRGB.g - startRGB.g) / steps,
+                b: (targetRGB.b - startRGB.b) / steps
+            };
+
+            let newR = Math.floor(startRGB.r + stepSize.r);
+            let newG = Math.floor(startRGB.g + stepSize.g);
+            let newB = Math.floor(startRGB.b + stepSize.b);
+
+            return rgbToHex(newR, newG, newB);
+        }
+    </script>
+</body>
+
+</html>
