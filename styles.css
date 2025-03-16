@@ -1,5 +1,44 @@
-canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+    font-family: "Space Mono", Menlo, Consolas, Monaco, "Courier New", monospace;;
 }
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.top_container {
+    position: relative;
+    z-index: 1;
+    padding: 100px;
+    color: #FFF2E8;
+}
+
+.title_container {
+    pointer-events: none;
+    font-size: 135px;
+    width: 100px;
+    line-height: 90%;
+}
+
+.desc {
+    font-size: 28px;
+    font-weight: 100;
+    width: 700px;
+}
+
+.name {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: #F2C299;
+}
+
+h1 {
+    padding: 0;
+    margin: 0;
+    font-weight: 100;
+}
+

@@ -12,38 +12,84 @@
 </head>
 
 <body>
+    <div>
+        <div class="top_container">
+            <h1 class="title_container">CAN DATA DIE?</h1>
+            <h2 class="desc">Why One of the Internet’s Oldest Images Lives On Without Its Subject’s Consent</h2>
+            <p class="name">Javier Carrillo</p>
+        </div>
+        
+        <div id="canvas" class="background"></div>
+    </div>
+    
+
+    
     <script>
         const GRID_WIDTH = 14
         const GAP = 1
+        const SPEED = 1
 
         const SQUARE_WIDTH = Math.ceil(window.innerWidth / (GRID_WIDTH + GAP))
         const SQUARE_HEIGHT = Math.ceil(window.innerHeight / (GRID_WIDTH + GAP))
 
-        const COLORS = ["#F1C29A", "#78A695", "#576CA2", "#B65259"];
+        const COLORS = ["#F2C299", "#D96666", "#79A695", "#586FA6"];
         const BACKGROUND_COLOR = "#390A29";
 
         // Setup initial color
         const SQUARE_COLOR = Array.from({ length: SQUARE_HEIGHT }, () => Array(SQUARE_WIDTH).fill(BACKGROUND_COLOR));
-        const PARTICLE_QUEUE = [];
+        var particle_queue = [];
             // particle = {color: BACKGROUND_COLOR, velocity: [0,0], exact_coords: [0,0]}
 
 
         function setup() {
-            createCanvas(windowWidth, windowHeight);
+            var canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent("canvas")
             background("#220619");
         }
 
-
         function draw() {
+            
             var mouseSquareX = Math.floor(mouseX / (GRID_WIDTH + GAP));
             var mouseSquareY = Math.floor(mouseY / (GRID_WIDTH + GAP));
 
             var angle = Math.random()*2*Math.PI;
             var particle = {   color: COLORS[Math.floor(Math.random() * COLORS.length)], 
-                                    velocity: [Math.cos(angle),Math.sin(angle)], 
+                                    velocity: [Math.cos(angle)*SPEED,Math.sin(angle)*SPEED], 
                                     exact_coords: [mouseX, mouseY]}
-            console.log(particle)
-            PARTICLE_QUEUE.push(particle)
+            
+            particle_queue.push(particle)
+            const NEW_QUEUE = []
+
+            // Process Particles
+            console.log(particle_queue.length)
+            while (particle_queue.length != 0) {
+                p = particle_queue.pop()
+
+                // clear last postition
+                var square_coords = [Math.floor(p.exact_coords[0] / (GRID_WIDTH + GAP)), Math.floor(p.exact_coords[1] / (GRID_WIDTH + GAP))]
+                SQUARE_COLOR[square_coords[1]][square_coords[0]] = BACKGROUND_COLOR;
+
+                // update position and color
+                var x = (p.exact_coords[0] + p.velocity[0])
+                if (x < 0) {x = windowWidth + x}
+                x = x % windowWidth
+                var y = (p.exact_coords[1] + p.velocity[1])
+                if (y < 0) {y = windowHeight + y}
+                y = y % windowHeight
+
+                p.exact_coords = [x, y]
+                p.color = stepColorTowardsBackground(p.color)
+
+                // color square
+                square_coords = [Math.floor(p.exact_coords[0] / (GRID_WIDTH + GAP)), Math.floor(p.exact_coords[1] / (GRID_WIDTH + GAP))]
+                SQUARE_COLOR[square_coords[1]][square_coords[0]] = p.color;
+                
+                // if its purple, pop
+                if (p.color.toLowerCase() != BACKGROUND_COLOR.toLowerCase()) {
+                    NEW_QUEUE.push(p)
+                } 
+            }
+            particle_queue = NEW_QUEUE
 
 
             // Paint Squares
@@ -79,7 +125,7 @@
             let startRGB = hexToRgb(startHex);
             let targetRGB = hexToRgb(BACKGROUND_COLOR);
 
-            var steps = 20;
+            const steps = 50;
 
             let stepSize = {
                 r: (targetRGB.r - startRGB.r) / steps,
@@ -94,6 +140,9 @@
             return rgbToHex(newR, newG, newB);
         }
     </script>
+
+
+    
 </body>
 
 </html>
