@@ -54,3 +54,19 @@ h1 {
 p {
     margin: 0;
 }
+
+.website_link {
+    margin-top: 10px;
+}
+
+.link {
+    color: tan;
+}
+
+.link:hover {
+    color: brown;
+}
+
+.link:visited {
+    color: tan;
+}
